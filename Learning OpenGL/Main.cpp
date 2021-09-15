@@ -11,28 +11,12 @@
 #include <glm\gtc\type_ptr.hpp>
 
 #include "myWindow.h"
+#include "Mesh.h"
+#include "Shader.h"
 
 std::string vFilePath = "vertex.vert", fFilePath = "fragment.frag";
 
 const float toRadians = 3.14159265f / 180.0f;
-
-std::string readFile(std::string filePath) {
-	std::ifstream newFile(filePath);
-
-	if (newFile.is_open()) {
-		std::string code, line;
-		while (!newFile.eof()) {
-			getline(newFile, line);
-			code.append(line + "\n");
-		}
-		newFile.close();
-		return code.c_str();
-	}
-	else {
-		printf("File '%s' could not be opened!", filePath.c_str());
-		return "";
-	}
-}
 
 int main() {
 
@@ -42,48 +26,12 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
-	std::string vShaderCode = readFile(vFilePath), fShaderCode = readFile(fFilePath);
-	const char* vShaderCode2 = vShaderCode.c_str();
-	const char* fShadercode2 = fShaderCode.c_str();
-
-	unsigned int vShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vShader, 1, &vShaderCode2, NULL);
-	glCompileShader(vShader);
-
-	int success;
-	char eLog[1024] = { 0 };
-	glGetShaderiv(vShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(vShader, 1024, NULL, eLog);
-		std::cout << eLog << std::endl;
+	Shader* shader = new Shader();
+	if (!shader->createShaderProgram(vFilePath, fFilePath)) {
+		printf("Shader program failed to compile!");
+		glfwTerminate();
 		return EXIT_FAILURE;
 	}
-
-	unsigned int fShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fShader, 1, &fShadercode2, NULL);
-	glCompileShader(fShader);
-
-	glGetShaderiv(fShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fShader, 1024, NULL, eLog);
-		std::cout << eLog << std::endl;
-		return EXIT_FAILURE;
-	}
-
-	unsigned int shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vShader);
-	glAttachShader(shaderProgram, fShader);
-	glLinkProgram(shaderProgram);
-
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 1024, NULL, eLog);
-		std::cout << eLog << std::endl;
-		return EXIT_FAILURE;
-	}
-
-	unsigned int uniformModel = glGetUniformLocation(shaderProgram, "model");
 
 	float vertices[] = {
 		//Position				//Color
@@ -91,18 +39,9 @@ int main() {
 		 1.0f, -1.0f, 0.0f,		0.0f, 1.0f, 0.0f,
 		 0.0f,  1.0f, 0.0f,		0.0f, 0.0f, 1.0f
 	};
-
-	unsigned int VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
+	
+	Mesh* triangle = new Mesh();
+	triangle->createMesh(vertices, sizeof(vertices));
 
 	float degree = 0.0f, deltadegree = 0.01f, scale = -1.0f, deltascale = 0.0001f;
 
@@ -114,15 +53,14 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//render shapes
+		shader->runProgram();
+		unsigned int uniformModel = shader->getUniformModelLocation();
 
 		glm::mat4 model(1.0f);
 		model = glm::scale(model, glm::vec3(abs(scale), abs(scale), 1.0f));
 		model = glm::rotate(model, degree * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-
-		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		triangle->renderMesh();
 
 		window.SwapBuffers();
 
@@ -137,8 +75,7 @@ int main() {
 		}
 	}
 
-	glDeleteShader(fShader);
-	glDeleteShader(vShader);
+	
 	glfwTerminate();
 	return EXIT_SUCCESS;
 }
