@@ -12,6 +12,7 @@ public:
 	int Initialize(const char* windowTitle);
 	void processInput();
 	bool WindowShouldClose();
+	float getAspectRatio();
 	void SwapBuffers();
 
 	~myWindow();

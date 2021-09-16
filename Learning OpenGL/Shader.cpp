@@ -65,12 +65,17 @@ bool Shader::createShaderProgram(std::string vertFilePath, std::string fragFileP
 	}
 
 	uniformModel = glGetUniformLocation(shaderProgram, "model");
+	uniformProjection = glGetUniformLocation(shaderProgram, "projection");
 
 	return true;
 }
 
 unsigned int Shader::getUniformModelLocation() {
 	return uniformModel;
+}
+
+unsigned int Shader::getUniformProjectionLocation() {
+	return uniformProjection;
 }
 
 void Shader::runProgram() {

@@ -16,8 +16,6 @@
 
 std::string vFilePath = "vertex.vert", fFilePath = "fragment.frag";
 
-const float toRadians = 3.14159265f / 180.0f;
-
 int main() {
 
 	myWindow window = myWindow();
@@ -33,13 +31,51 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
-	int sizeOfVertices = 8; //number of float values in each vertex
+	int sizeOfVertices = 5; //number of float values in each vertex
 	float vertices[] = {
-		//Position				//Color				//Texcoords
-		-1.0f, 1.0f, 0.0f,		1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
-		 -1.0f, -1.0f, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
-		 1.0f,  -1.0f, 0.0f,	0.0f, 0.0f, 0.0f,	1.0f, 0.0f,
-		 1.0f,  1.0f, 0.0f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f
+		//Position				//Texcoords
+		-0.5f, -0.5f,-0.5f,		0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,		1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,		1.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,		1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,	1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,	1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,	1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,	0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,	1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,	1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,	1.0f, 0.0f,
+
+		 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,	1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,	0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,	0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,	0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,	1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,	1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,	1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,	0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,	1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,	0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,	0.0f, 1.0f
+
 	};
 
 	// Compute the number of indices in the vertices array
@@ -63,22 +99,27 @@ int main() {
 		glfwPollEvents();
 		window.processInput();
 
+		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.0f, 1.0f, 1.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//render shapes
 		shader->runProgram();
 		unsigned int uniformModel = shader->getUniformModelLocation();
+		unsigned int uniformProjection = shader->getUniformProjectionLocation();
 
 		glm::mat4 model(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
 		model = glm::scale(model, glm::vec3(abs(scale), abs(scale), 1.0f));
-		model = glm::rotate(model, degree * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(degree), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getAspectRatio(), 0.1f, 100.0f);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		triangle->renderMesh();
 
 		window.SwapBuffers();
 
-		/*degree += deltadegree;
+		degree += deltadegree;
 		if (degree >= 360.0f) {
 			degree = 0.0f;
 		}
@@ -86,7 +127,7 @@ int main() {
 		scale += deltascale;
 		if (scale >= 1.0f) {
 			scale *= -1.0f;
-		}*/
+		}
 	}
 	
 	glfwTerminate();

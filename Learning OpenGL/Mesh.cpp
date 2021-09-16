@@ -13,19 +13,17 @@ void Mesh::createMesh(float* vertices, int lenVertices, int sizeOfVertices, int*
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, lenVertices * sizeOfVertices * sizeof(float), vertices, GL_STATIC_DRAW);
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, lenIndices * sizeof(int), indices, GL_STATIC_DRAW);
+	//glGenBuffers(1, &EBO);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, lenIndices * sizeof(int), indices, GL_STATIC_DRAW);
 
 	// Specifies location in vertices array where the positions are
 	// the first argument of next function calls specify the location the vertices go
 	// this is important for the vertex shader
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeOfVertices * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeOfVertices * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeOfVertices * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeOfVertices * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -54,6 +52,6 @@ void Mesh::renderMesh() {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, lenIndices, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, lenVertices);
 	glBindVertexArray(0);
 }

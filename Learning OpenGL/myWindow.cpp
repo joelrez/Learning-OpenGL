@@ -14,6 +14,10 @@ myWindow::myWindow(int width, int height) {
 	this->height = height;
 }
 
+float myWindow::getAspectRatio() {
+	return (float)bwidth / (float)bheight;
+}
+
 void myWindow::processInput() {
 	if (glfwGetKey(mainWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(mainWindow, true);

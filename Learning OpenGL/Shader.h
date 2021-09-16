@@ -18,10 +18,11 @@ public:
 	bool createShaderProgram(std::string vertFilePath, std::string fragFilePath);
 	void deleteShaders();
 	unsigned int getUniformModelLocation();
+	unsigned int getUniformProjectionLocation();
 	void runProgram();
 
 	~Shader();
 private:
-	unsigned int vShader, fShader, shaderProgram, uniformModel;
+	unsigned int vShader, fShader, shaderProgram, uniformModel, uniformProjection;
 };
 
