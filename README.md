@@ -11,3 +11,6 @@ Above, I am getting an intuition for the local space and vertex/fragment shaders
 
 # Update 9/15/2021
 I am learning about applying textures to primitives, and I am implementing indexed draw to draw rectangles.
+
+# Update 9/16/2021
+Learning about the view and projection matrix and getting an intuition for it. I haven't added mouse events yet, but you can start moving around the space with WASD.
