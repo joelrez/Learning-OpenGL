@@ -19,10 +19,12 @@ public:
 	void deleteShaders();
 	unsigned int getUniformModelLocation();
 	unsigned int getUniformProjectionLocation();
+	unsigned int getUniformViewLocation();
 	void runProgram();
 
 	~Shader();
 private:
-	unsigned int vShader, fShader, shaderProgram, uniformModel, uniformProjection;
+	unsigned int vShader, fShader, shaderProgram, 
+				uniformModel, uniformProjection, uniformView;
 };
 
