@@ -5,19 +5,21 @@ myWindow::myWindow() {
 	//Default dimensions of window
 	this->width = 800;
 	this->height = 600;
+	this->inv = 1;
 
 	this->mouseFirstMoved = false;
-	this->camera = glm::mat4(1.0f);
+	this->camera = Camera(glm::vec3(0.0f, 0.0f, -3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
 }
 
 //Overloaded constructor
-myWindow::myWindow(int width, int height) {
+myWindow::myWindow(int width, int height, int inv) {
 	//User-defined dimensions of window
 	this->width = width;
 	this->height = height;
+	this->inv = inv;
 
 	this->mouseFirstMoved = false;
-	this->camera = glm::mat4(1.0f);
+	this->camera = Camera(glm::vec3(0.0f, 0.0f, -3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
 }
 
 float myWindow::getAspectRatio() {
@@ -30,23 +32,23 @@ void myWindow::processInput() {
 	}
 	
 	if (glfwGetKey(mainWindow, GLFW_KEY_W) == GLFW_PRESS) {
-		this->camera = glm::translate(this->camera, glm::vec3( 0.0f, 0.0f, 0.01f));
+		this->camera.translate(glm::vec3( 0.0f, 0.0f, -0.01f));
 	}
 	if (glfwGetKey(mainWindow, GLFW_KEY_A) == GLFW_PRESS) {
-		this->camera = glm::translate(this->camera, glm::vec3(0.01f, 0.0f, 0.0f));
+		this->camera.translate(glm::vec3(-0.01f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(mainWindow, GLFW_KEY_S) == GLFW_PRESS) {
-		this->camera = glm::translate(this->camera, glm::vec3(0.0f, 0.0f, -0.01f));
+		this->camera.translate(glm::vec3(0.0f, 0.0f, 0.01f));
 	}
 	if (glfwGetKey(mainWindow, GLFW_KEY_D) == GLFW_PRESS) {
-		this->camera = glm::translate(this->camera, glm::vec3(-0.01f, 0.0f, 0.0f));
+		this->camera.translate(glm::vec3(0.01f, 0.0f, 0.0f));
 	}
 
 	glfwGetFramebufferSize(mainWindow, &bwidth, &bheight);
 }
 
 GLfloat* myWindow::getCamera() {
-	return glm::value_ptr(camera);
+	return camera.getCamera();
 }
 
 void adjustViewport(GLFWwindow* window, int width, int height) {
@@ -70,13 +72,16 @@ void myWindow::mouseMove(GLFWwindow* window, double xPos, double yPos) {
 		theWindow->mouseFirstMoved = true;
 	}
 	
-	theWindow->xChange =  xPos - theWindow->lastX;
-	theWindow->xChange = theWindow->lastY - yPos;
-
-	//printf("X: %d Y: %d\n", theWindow->xChange, theWindow->yChange);
-
+	float xoffset =  xPos - theWindow->lastX;
+	float yoffset = theWindow->inv*(theWindow->lastY - yPos);
 	theWindow->lastX = xPos;
 	theWindow->lastY = yPos;
+
+	float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	theWindow->camera.rotate(xoffset, yoffset);
 }
 
 //Instantiate window with OpenGL constraints

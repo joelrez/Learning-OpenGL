@@ -18,7 +18,7 @@ std::string vFilePath = "vertex.vert", fFilePath = "fragment.frag";
 
 int main() {
 
-	myWindow window = myWindow();
+	myWindow window = myWindow(800, 600, 1);
 
 	if (!window.Initialize("LearnOpenGL")) {
 		return EXIT_FAILURE;

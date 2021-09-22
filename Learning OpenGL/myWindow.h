@@ -7,11 +7,13 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
 
+#include "Camera.h"
+
 class myWindow
 {
 public:
 	myWindow();
-	myWindow(int width, int height);
+	myWindow(int width, int height, int inv);
 
 	int Initialize(const char* windowTitle);
 	void processInput();
@@ -24,10 +26,10 @@ public:
 private:
 	//void adjustViewport(GLFWwindow* window, int width, int height);
 	GLFWwindow* mainWindow;
-	int width, height, bwidth, bheight;
-	float lastX, lastY, xChange, yChange;
+	int width, height, bwidth, bheight, inv;
+	float lastX, lastY;
 	bool mouseFirstMoved;
-	glm::mat4 camera;
+	Camera camera;
 
 	static void mouseMove(GLFWwindow* window, double xPos, double yPos);
 };
