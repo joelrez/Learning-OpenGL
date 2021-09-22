@@ -14,7 +14,7 @@ public:
 	Camera(glm::vec3 pos, glm::vec3 up, float yaw, float pitch);
 
 	GLfloat* getCamera();
-	void translate(glm::vec3 move);
+	void move(float speed, int key);
 	void rotate(float deltayaw, float deltapitch);
 
 	~Camera();

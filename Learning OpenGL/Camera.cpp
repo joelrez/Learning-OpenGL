@@ -9,8 +9,15 @@ Camera::Camera(glm::vec3 pos, glm::vec3 up, float yaw, float pitch) {
 	this->pitch = 0.0f;
 }
 
-void Camera::translate(glm::vec3 move) {
-	this->pos += move;
+void Camera::move(float speed, int key) {
+	if (key == 0)
+		pos += speed * target;
+	if (key == 1)
+		pos -= speed * glm::normalize(glm::cross(target, up));
+	if (key == 2)
+		pos -= speed * target;
+	if (key == 3)
+		pos += speed * glm::normalize(glm::cross(target, up));
 }
 
 void Camera::update() {

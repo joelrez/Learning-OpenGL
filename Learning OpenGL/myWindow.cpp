@@ -27,22 +27,19 @@ float myWindow::getAspectRatio() {
 }
 
 void myWindow::processInput() {
-	if (glfwGetKey(mainWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+	if (glfwGetKey(mainWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(mainWindow, true);
-	}
-	
-	if (glfwGetKey(mainWindow, GLFW_KEY_W) == GLFW_PRESS) {
-		this->camera.translate(glm::vec3( 0.0f, 0.0f, -0.01f));
-	}
-	if (glfwGetKey(mainWindow, GLFW_KEY_A) == GLFW_PRESS) {
-		this->camera.translate(glm::vec3(-0.01f, 0.0f, 0.0f));
-	}
-	if (glfwGetKey(mainWindow, GLFW_KEY_S) == GLFW_PRESS) {
-		this->camera.translate(glm::vec3(0.0f, 0.0f, 0.01f));
-	}
-	if (glfwGetKey(mainWindow, GLFW_KEY_D) == GLFW_PRESS) {
-		this->camera.translate(glm::vec3(0.01f, 0.0f, 0.0f));
-	}
+	float speed = 0.01f;
+	if (glfwGetKey(mainWindow, GLFW_KEY_W) == GLFW_PRESS) 
+		this->camera.move(speed, 0);
+	if (glfwGetKey(mainWindow, GLFW_KEY_A) == GLFW_PRESS)
+		this->camera.move(speed, 1);
+	if (glfwGetKey(mainWindow, GLFW_KEY_S) == GLFW_PRESS)
+		this->camera.move(speed, 2);
+	if (glfwGetKey(mainWindow, GLFW_KEY_D) == GLFW_PRESS)
+		this->camera.move(speed, 3);
+	if (glfwGetKey(mainWindow, GLFW_KEY_I) == GLFW_PRESS)
+		this->inv *= -1;
 
 	glfwGetFramebufferSize(mainWindow, &bwidth, &bheight);
 }
